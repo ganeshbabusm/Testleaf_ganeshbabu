@@ -1,0 +1,120 @@
+package WeekOne;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.Select;
+
+public class ajioShopping {
+
+	public static void main(String[] args) throws InterruptedException {
+		System.setProperty("webdriver.chrome.driver", "./drivers\\chromedriver.exe");
+		ChromeOptions  options = new ChromeOptions();
+		options.addArguments("--disable-notifications");
+		ChromeDriver driver = new ChromeDriver(options);
+		driver.manage().deleteAllCookies();
+		driver.navigate().to("https://www.ajio.com/shop/sale");
+		driver.manage().window().maximize();
+		
+		driver.findElementByXPath("//div[@class='searchbar-view']/div/input").sendKeys("Bags");
+		Thread.sleep(5000);
+		driver.findElementByXPath("//span[text()='Women Handbags']").click();
+		Thread.sleep(3000);
+	driver.findElementByXPath("//div[@class='five-grid']").click();
+		
+		WebElement ele = driver.findElementByXPath("//div[@class='filter-dropdown']/select");
+		Select dd = new Select(ele);
+		dd.selectByVisibleText("What's New");
+		
+		driver.findElementByXPath("(//div[@class='facet-head '])[1]").click();
+		driver.executeScript("window.scrollBy(0,200)");
+		driver.findElementById("minPrice").sendKeys("2500");
+		driver.findElementById("maxPrice").sendKeys("5000");
+		Thread.sleep(3000);
+		driver.findElementByXPath("//div[@class='price-container']//button").click();
+		Thread.sleep(5000);
+		
+		driver.findElementByXPath("(//div[text()='TOMMY HILFIGER']/following-sibling::div)[3]").click();
+		
+		
+		Set<String> WindowID = driver.getWindowHandles();
+		//System.out.println(WindowID);
+
+		List<String> WindowPick = new ArrayList<String>(WindowID);
+		
+		WebDriver window = driver.switchTo().window(WindowPick.get(1));
+		
+		System.out.println(window.getCurrentUrl());
+		
+		String coupon_apply = driver.findElementByXPath("//div[@class = 'promo-desc']").getText();
+		String coupon_code = null;
+		String discnt_prz = null;
+		if(coupon_apply.contains("2890 and Above"))
+		{
+			System.out.println("Yes 2890 coupon applicable");
+			coupon_code = driver.findElementByXPath("//div[@class = 'promo-title']").getText();
+			coupon_code = coupon_code.replaceAll("Use Code", "");
+			System.out.println(coupon_code);
+		
+		String discPrice = driver.findElementByXPath("//div[@class='promo-discounted-price']//span").getText();
+		discnt_prz = discPrice.replaceAll("[^0-9]", "");
+		System.out.println("Discount price " + discnt_prz);
+	}
+		
+		driver.findElementByXPath("//span[contains(text(),'Pin-code')]").click();
+		driver.findElementByName("pincode").sendKeys("560043");
+		driver.findElementByXPath("(//button)[4]").click();
+		Thread.sleep(3000);
+		
+		String dDate = driver.findElementByXPath("//li[text() ='Expected Delivery: ']//span").getText();
+		System.out.println(dDate);
+		
+		driver.findElementByXPath("//div[@class='other-info-toggle']").click();
+		
+		String otherinfo = driver.findElementByXPath("(//span[@class='other-info'])[7]").getText();
+		System.out.println(otherinfo);
+		
+		driver.findElementByXPath("//div[@class='btn-gold']").click();
+		Thread.sleep(4000);
+		
+		driver.findElementByXPath("//span[text()='GO TO BAG']").click();
+		Thread.sleep(3000);
+		
+		driver.findElementById("couponCodeInput").click();
+		driver.findElementById("couponCodeInput").sendKeys(coupon_code);
+		
+		driver.findElementByXPath("//button[text()='Apply']").click();
+		Thread.sleep(3000);
+		
+	String price2 = driver.findElementByXPath("//span[@class='price-value bold-font']").getText();
+	String price3 = driver.findElementByXPath("(//span[@class='price-value'])[2]").getText();
+	
+	String netprice = driver.findElementByXPath("//div[@class='net-price best-price-strip']").getText();
+	String fprice = netprice.substring(4,9).replaceAll("[^0-9]", "");
+	System.out.println(fprice);
+	
+	System.out.println(price2);
+	System.out.println(price3);
+	String price2new = price2.substring(4);
+	System.out.println(price2new);
+	String price3new = price3.substring(4);
+	System.out.println(price3new);
+	
+	if (fprice.equals(discnt_prz)) {
+		System.out.println("My Price WORKS");
+	}else System.out.println("IT DID NOT WORK");
+			
+	driver.findElementByXPath("//div[text()='Delete']").click();
+	driver.findElementByXPath("//div[text()='DELETE']").click();
+
+	}
+
+}
+
+
+/* This is working as expected */
